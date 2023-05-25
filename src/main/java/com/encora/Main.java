@@ -25,16 +25,16 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 
+    // Get all to dos.
     @GetMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getToDos() {
         return toDosRepository.findAll();
     }
 
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Text is longer than 120 characters.")  // 404
-    public static class longerThanMaxException extends RuntimeException {
-        // ...
-    }
+    // Add a new to do.
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Text is longer than 120 characters.")
+    public static class longerThanMaxException extends RuntimeException {}
     record NewToDo(
             String text,
             Date dueDate,
