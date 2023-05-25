@@ -38,6 +38,14 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         return this.todos;
     }
 
+    // Save new element.
+    @Override
+    public <S extends ToDos> S save(S entity) {
+        entity.setId(++this.lastId);
+        this.todos.add(entity);
+        return null;
+    }
+
     /*
     *         N O T   Y E T   D E F I N E D .
     */
@@ -118,11 +126,6 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
 
     @Override
     public <S extends ToDos, R> R findBy(Example<S> example, Function<FluentQuery.FetchableFluentQuery<S>, R> queryFunction) {
-        return null;
-    }
-
-    @Override
-    public <S extends ToDos> S save(S entity) {
         return null;
     }
 

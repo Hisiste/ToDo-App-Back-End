@@ -2,8 +2,9 @@ package com.encora;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
@@ -26,5 +27,21 @@ public class Main {
     @GetMapping("/todos")
     public List<ToDos> getToDos() {
         return toDosRepository.findAll();
+    }
+
+    record NewToDo(
+            String text,
+            Date dueDate,
+            Priority priority
+    ) {
+
+    }
+    @PostMapping
+    public void addToDo(@RequestBody NewToDo toDo) {
+        ToDos todo = new ToDos();
+        todo.setText(toDo.text());
+        todo.setDueDate(toDo.dueDate());
+        todo.setPriority(toDo.priority());
+        toDosRepository.save(todo);
     }
 }
