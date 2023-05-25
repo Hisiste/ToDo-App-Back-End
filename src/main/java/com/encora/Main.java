@@ -2,6 +2,7 @@ package com.encora;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,10 +26,15 @@ public class Main {
     }
 
     @GetMapping("/todos")
+    @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getToDos() {
         return toDosRepository.findAll();
     }
 
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Text is longer than 120 characters.")  // 404
+    public static class longerThanMaxException extends RuntimeException {
+        // ...
+    }
     record NewToDo(
             String text,
             Date dueDate,
@@ -37,7 +43,11 @@ public class Main {
 
     }
     @PostMapping
+    @ResponseStatus(value=HttpStatus.OK)
     public void addToDo(@RequestBody NewToDo toDo) {
+        if (toDo.text().length() > 120) {
+            throw new longerThanMaxException();
+        }
         ToDos todo = new ToDos();
         todo.setText(toDo.text());
         todo.setDueDate(toDo.dueDate());
