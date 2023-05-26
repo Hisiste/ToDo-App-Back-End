@@ -35,7 +35,7 @@ public class Main {
     // Add a new to do.
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Text is longer than 120 characters.")
     public static class longerThanMaxException extends RuntimeException {}
-    record NewToDo(
+    record toDoBody(
             String text,
             Date dueDate,
             Priority priority
@@ -44,7 +44,7 @@ public class Main {
     }
     @PostMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
-    public void addToDo(@RequestBody NewToDo toDo) {
+    public void addToDo(@RequestBody toDoBody toDo) {
         if (toDo.text().length() > 120) {
             throw new longerThanMaxException();
         }
@@ -55,9 +55,26 @@ public class Main {
         toDosRepository.save(todo);
     }
 
-    // Update a to do with "done".
+    // Updates to do with new information
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="No to do with such index.")
     public static class toDoNotFound extends RuntimeException {}
+
+    @PutMapping("/todos/{id}")
+    @ResponseStatus(value=HttpStatus.OK)
+    public void editToDo(@PathVariable("id") Integer id, @RequestBody toDoBody toDo) {
+        ToDos selectedToDo = toDosRepository.getById(id);
+        if (selectedToDo == null)   throw new toDoNotFound();
+
+        if (toDo.text() != null) {
+            if (toDo.text().length() > 120)     throw new longerThanMaxException();
+            selectedToDo.setText(toDo.text());
+        }
+        if (toDo.dueDate() != null)     selectedToDo.setDueDate(toDo.dueDate());
+        if (toDo.priority() != null)    selectedToDo.setPriority(toDo.priority());
+    }
+
+
+    // Update a to do with "done".
 
     @PostMapping("/todos/{id}/done")
     @ResponseStatus(value=HttpStatus.OK)
