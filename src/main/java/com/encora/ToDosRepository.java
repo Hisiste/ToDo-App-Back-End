@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.FluentQuery;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ToDosRepository implements JpaRepository<ToDos, Integer> {
     Integer lastId;
@@ -105,6 +106,42 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
                 break;
             }
         }
+    }
+
+    // Get to dos list filtered.
+    public List<ToDos> findAllWithFilter(String name, String priority, String done) throws Exception {
+        List<ToDos> filtered = new ArrayList<>(this.todos);
+
+        if (name != null && !name.equals("")) {
+            filtered = filtered.stream()
+                    .filter(todo -> todo.getText().contains(name))
+                    .collect(Collectors.toList());
+        }
+        if (priority != null && !priority.equalsIgnoreCase("all")) {
+            filtered = filtered.stream()
+                    .filter(todo -> Objects.equals(String.valueOf(todo.getPriority()), priority))
+                    .collect(Collectors.toList());
+        }
+        if (done != null && !done.equalsIgnoreCase("all")) {
+            switch (done) {
+                case "Done":
+                    filtered = filtered.stream()
+                            .filter(ToDos::isDone)
+                            .collect(Collectors.toList());
+                    break;
+
+                case "Undone":
+                    filtered = filtered.stream()
+                            .filter(todo -> !todo.isDone())
+                            .collect(Collectors.toList());
+                    break;
+
+                default:
+                    throw new Exception("Filtering not supported on 'done'.");
+            }
+        }
+
+        return filtered;
     }
 
     private Comparator<ToDos> getToDoComparator(Sort sort) throws Exception {

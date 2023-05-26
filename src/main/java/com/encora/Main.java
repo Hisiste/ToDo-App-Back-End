@@ -124,12 +124,27 @@ public class Main {
     }
     @GetMapping("/todos/{field}/{order}")
     @ResponseStatus(value=HttpStatus.OK)
-    public List<ToDos> getFilteredToDos(@PathVariable("field") SortingsFields field, @PathVariable("order") SortingOrders order) {
+    public List<ToDos> getSortedToDos(@PathVariable("field") SortingsFields field, @PathVariable("order") SortingOrders order) {
         Sort sortingMethod = Sort.by(String.valueOf(field));
         if (Objects.equals(String.valueOf(order), "DESC")) {
             sortingMethod = sortingMethod.descending();
         }
 
         return toDosRepository.findAll(sortingMethod);
+    }
+
+
+    // Getting filtered to dos.
+    record toDoFilters (
+            String name,
+            String priority,
+            String done
+    ) {
+
+    }
+    @GetMapping("/todos/filter")
+    @ResponseStatus(value=HttpStatus.OK)
+    public List<ToDos> getFilteredToDos(@RequestBody toDoFilters filters) throws Exception {
+        return toDosRepository.findAllWithFilter(filters.name(), filters.priority(), filters.done());
     }
 }
