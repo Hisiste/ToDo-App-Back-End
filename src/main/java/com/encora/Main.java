@@ -54,4 +54,20 @@ public class Main {
         todo.setPriority(toDo.priority());
         toDosRepository.save(todo);
     }
+
+    // Update a to do with "done".
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="No to do with such index.")
+    public static class toDoNotFound extends RuntimeException {}
+
+    @PostMapping("/todos/{id}/done")
+    @ResponseStatus(value=HttpStatus.OK)
+    public void setDone(@PathVariable("id") Integer id) {
+        ToDos selectedToDo = toDosRepository.getById(id);
+        if (selectedToDo == null)   throw new toDoNotFound();
+        if (selectedToDo.isDone())  return;
+
+        selectedToDo.setDone(true);
+        selectedToDo.setDoneDate(new Date());
+        toDosRepository.save(selectedToDo);
+    }
 }

@@ -66,6 +66,21 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         return null;
     }
 
+    // Retrieve a to do.
+    @Override
+    public ToDos getById(Integer integer) {
+        ToDos selectedToDo;
+
+        for (int index = 0; index < this.todos.size(); index++) {
+            selectedToDo = this.todos.get(index);
+            if (Objects.equals(selectedToDo.getId(), integer)) {
+                return selectedToDo;
+            }
+        }
+
+        return null;
+    }
+
     /*
     *         N O T   Y E T   D E F I N E D .
     */
@@ -101,11 +116,6 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
 
     @Override
     public ToDos getOne(Integer integer) {
-        return null;
-    }
-
-    @Override
-    public ToDos getById(Integer integer) {
         return null;
     }
 
