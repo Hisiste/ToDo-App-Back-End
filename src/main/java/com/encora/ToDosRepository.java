@@ -11,10 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.FluentQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 public class ToDosRepository implements JpaRepository<ToDos, Integer> {
@@ -37,6 +34,21 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
     @Override
     public List<ToDos> findAll() {
         return this.todos;
+    }
+
+    // Return all to dos and sorted.
+    @Override
+    public List<ToDos> findAll(Sort sort) {
+        List<ToDos> sortedList = new ArrayList<>(this.todos);
+
+        try {
+            Comparator<ToDos> comparator = this.getToDoComparator(sort);
+            Collections.sort(sortedList, comparator);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return sortedList;
     }
 
     // Save new element.
@@ -79,6 +91,40 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         }
 
         return null;
+    }
+
+    private Comparator<ToDos> getToDoComparator(Sort sort) throws Exception {
+        // Personal function. Creates a `Comparator` based on the `sort`
+        // parameter. This is for us to successfully sort our List without the
+        // need of a database.
+        String sortString = sort.toString();    // <- '{field}: {order}'
+        String[] sortCriteria = sortString.split(": ");
+
+        String field = sortCriteria[0];
+        String order = sortCriteria[1];
+
+        Comparator<ToDos> comparator = null;
+        switch (field) {
+            case "Id":
+                comparator = Comparator.comparing(ToDos::getId);
+                break;
+
+            case "Priority":
+                comparator = Comparator.comparing(ToDos::getPriority);
+                break;
+
+            case "DueDate":
+                comparator = Comparator.comparing(ToDos::getDueDate);
+                break;
+
+            default:
+                throw new Exception("Field sorting not implemented.");
+        }
+
+        if (order.equalsIgnoreCase("desc")) {
+            comparator = comparator.reversed();
+        }
+        return comparator;
     }
 
     /*
@@ -207,11 +253,6 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
     @Override
     public void deleteAll() {
 
-    }
-
-    @Override
-    public List<ToDos> findAll(Sort sort) {
-        return null;
     }
 
     @Override

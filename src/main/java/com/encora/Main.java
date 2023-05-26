@@ -2,11 +2,13 @@ package com.encora;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @SpringBootApplication
 @RestController
@@ -99,5 +101,24 @@ public class Main {
         selectedToDo.setDone(false);
         selectedToDo.setDoneDate(null);
         toDosRepository.save(selectedToDo);
+    }
+
+
+    // Getting sorted to dos.
+    enum SortingsFields {
+        Id, Priority, DueDate
+    }
+    enum SortingOrders {
+        ASC, DESC
+    }
+    @GetMapping("/todos/{field}/{order}")
+    @ResponseStatus(value=HttpStatus.OK)
+    public List<ToDos> getFilteredToDos(@PathVariable("field") SortingsFields field, @PathVariable("order") SortingOrders order) {
+        Sort sortingMethod = Sort.by(String.valueOf(field));
+        if (Objects.equals(String.valueOf(order), "DESC")) {
+            sortingMethod = sortingMethod.descending();
+        }
+
+        return toDosRepository.findAll(sortingMethod);
     }
 }
