@@ -27,12 +27,14 @@ public class Main {
         SpringApplication.run(Main.class, args);
     }
 
+
     // Get all to dos.
     @GetMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getToDos() {
         return toDosRepository.findAll();
     }
+
 
     // Add a new to do.
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Text is longer than 120 characters.")
@@ -57,6 +59,7 @@ public class Main {
         toDosRepository.save(todo);
     }
 
+
     // Updates to do with new information
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="No to do with such index.")
     public static class toDoNotFound extends RuntimeException {}
@@ -77,7 +80,6 @@ public class Main {
 
 
     // Update a to do with "done".
-
     @PostMapping("/todos/{id}/done")
     @ResponseStatus(value=HttpStatus.OK)
     public void setDone(@PathVariable("id") Integer id) {
@@ -89,6 +91,7 @@ public class Main {
         selectedToDo.setDoneDate(new Date());
         toDosRepository.save(selectedToDo);
     }
+
 
     // Update a to do to set "done" as false.
     @PutMapping("/todos/{id}/undone")
