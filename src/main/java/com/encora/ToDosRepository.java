@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.FluentQuery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -41,8 +42,27 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
     // Save new element.
     @Override
     public <S extends ToDos> S save(S entity) {
-        entity.setId(++this.lastId);
+        if (entity.getId() != null) {
+            // If the entity has an ID, search for it in our list of to dos and
+            // replace it.
+            ToDos selectedToDo;
+
+            for (int index = 0; index < this.todos.size(); index++) {
+                selectedToDo = this.todos.get(index);
+                if (Objects.equals(selectedToDo.getId(), entity.getId())) {
+                    this.todos.set(index, entity);
+                    return null;
+                }
+            }
+        } else {
+            // If entity doesn't have an ID, assign it a new one.
+            entity.setId(++this.lastId);
+        }
+
+        // If the ID couldn't be found or the entity didn't exist, append the
+        // entity to our list.
         this.todos.add(entity);
+
         return null;
     }
 
