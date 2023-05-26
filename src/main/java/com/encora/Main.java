@@ -70,4 +70,17 @@ public class Main {
         selectedToDo.setDoneDate(new Date());
         toDosRepository.save(selectedToDo);
     }
+
+    // Update a to do to set "done" as false.
+    @PutMapping("/todos/{id}/undone")
+    @ResponseStatus(value=HttpStatus.OK)
+    public void setUndone(@PathVariable("id") Integer id) {
+        ToDos selectedToDo = toDosRepository.getById(id);
+        if (selectedToDo == null)   throw new toDoNotFound();
+        if (!selectedToDo.isDone())  return;
+
+        selectedToDo.setDone(false);
+        selectedToDo.setDoneDate(null);
+        toDosRepository.save(selectedToDo);
+    }
 }
