@@ -42,7 +42,7 @@ public class Main {
     ) {
 
     }
-    @PostMapping
+    @PostMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
     public void addToDo(@RequestBody NewToDo toDo) {
         if (toDo.text().length() > 120) {
