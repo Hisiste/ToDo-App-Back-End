@@ -93,6 +93,20 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         return null;
     }
 
+    // Delete a to do.
+    @Override
+    public void deleteById(Integer integer) {
+        ToDos selectedToDo;
+
+        for (int index = 0; index < this.todos.size(); index++) {
+            selectedToDo = this.todos.get(index);
+            if (Objects.equals(selectedToDo.getId(), integer)) {
+                this.todos.remove(index);
+                break;
+            }
+        }
+    }
+
     private Comparator<ToDos> getToDoComparator(Sort sort) throws Exception {
         // Personal function. Creates a `Comparator` based on the `sort`
         // parameter. This is for us to successfully sort our List without the
@@ -228,11 +242,6 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
     @Override
     public long count() {
         return 0;
-    }
-
-    @Override
-    public void deleteById(Integer integer) {
-
     }
 
     @Override

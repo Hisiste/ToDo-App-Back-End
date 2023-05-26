@@ -79,6 +79,14 @@ public class Main {
     }
 
 
+    // Deletes a to do by index.
+    @DeleteMapping("/todos/{id}")
+    @ResponseStatus(value=HttpStatus.OK)
+    public void removeToDo(@PathVariable("id") Integer id) {
+        toDosRepository.deleteById(id);
+    }
+
+
     // Update a to do with "done".
     @PostMapping("/todos/{id}/done")
     @ResponseStatus(value=HttpStatus.OK)
