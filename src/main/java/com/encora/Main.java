@@ -2,12 +2,9 @@ package com.encora;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Date;
 import java.util.List;
@@ -17,15 +14,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping("v1")
 public class Main {
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("*");
-            }
-        };
-    }
+    // Edit this origin and set where the Front End is allocated.
+    private static final String allowed_origin = "http://localhost:8080/";
 
 
     private final ToDosRepository toDosRepository;
@@ -43,6 +33,7 @@ public class Main {
 
 
     // Get all to dos.
+    @CrossOrigin(origins=allowed_origin)
     @GetMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getToDos() {
@@ -60,6 +51,7 @@ public class Main {
     ) {
 
     }
+    @CrossOrigin(origins=allowed_origin)
     @PostMapping("/todos")
     @ResponseStatus(value=HttpStatus.OK)
     public void addToDo(@RequestBody toDoBody toDo) {
@@ -78,6 +70,7 @@ public class Main {
     @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="No to do with such index.")
     public static class toDoNotFound extends RuntimeException {}
 
+    @CrossOrigin(origins=allowed_origin)
     @PutMapping("/todos/{id}")
     @ResponseStatus(value=HttpStatus.OK)
     public void editToDo(@PathVariable("id") Integer id, @RequestBody toDoBody toDo) {
@@ -94,6 +87,7 @@ public class Main {
 
 
     // Deletes a to do by index.
+    @CrossOrigin(origins=allowed_origin)
     @DeleteMapping("/todos/{id}")
     @ResponseStatus(value=HttpStatus.OK)
     public void removeToDo(@PathVariable("id") Integer id) {
@@ -102,6 +96,7 @@ public class Main {
 
 
     // Update a to do with "done".
+    @CrossOrigin(origins=allowed_origin)
     @PostMapping("/todos/{id}/done")
     @ResponseStatus(value=HttpStatus.OK)
     public void setDone(@PathVariable("id") Integer id) {
@@ -116,6 +111,7 @@ public class Main {
 
 
     // Update a to do to set "done" as false.
+    @CrossOrigin(origins=allowed_origin)
     @PutMapping("/todos/{id}/undone")
     @ResponseStatus(value=HttpStatus.OK)
     public void setUndone(@PathVariable("id") Integer id) {
@@ -136,6 +132,7 @@ public class Main {
     enum SortingOrders {
         ASC, DESC
     }
+    @CrossOrigin(origins=allowed_origin)
     @GetMapping("/todos/{field}/{order}")
     @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getSortedToDos(@PathVariable("field") SortingsFields field, @PathVariable("order") SortingOrders order) {
@@ -156,6 +153,7 @@ public class Main {
     ) {
 
     }
+    @CrossOrigin(origins=allowed_origin)
     @GetMapping("/todos/filter")
     @ResponseStatus(value=HttpStatus.OK)
     public List<ToDos> getFilteredToDos(@RequestBody toDoFilters filters) throws Exception {
