@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Objects;
 
 enum Priority {
-    LOW, MEDIUM, HIGH;
+    Low, Medium, High;
 }
 
 @Entity
