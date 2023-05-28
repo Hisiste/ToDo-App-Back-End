@@ -2,8 +2,14 @@ package com.encora;
 
 // Uncomment this for using a database instead.
 //public interface ToDosRepository extends JpaRepository<ToDos, Integer>{
+//    // Get to dos list filtered.
+//    public List<ToDos> findAllWithFilter(String name, String priority, String done) throws Exception {
+//        // Use Queries to filter your to dos.
+//        return null;
+//    }
 //}
 
+// Comment ALL of this if using a database.
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
