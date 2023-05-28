@@ -81,7 +81,13 @@ public class Main {
             if (toDo.text().length() > 120)     throw new longerThanMaxException();
             selectedToDo.setText(toDo.text());
         }
-        if (toDo.dueDate() != null)     selectedToDo.setDueDate(toDo.dueDate());
+        if (toDo.dueDate() != null) {
+            if (toDo.dueDate().equals(new Date(0))) {
+                selectedToDo.setDueDate(null);
+            } else {
+                selectedToDo.setDueDate(toDo.dueDate());
+            }
+        }
         if (toDo.priority() != null)    selectedToDo.setPriority(toDo.priority());
     }
 
