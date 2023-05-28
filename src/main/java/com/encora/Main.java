@@ -165,4 +165,13 @@ public class Main {
     public List<ToDos> getFilteredToDos(@RequestBody toDoFilters filters) throws Exception {
         return toDosRepository.findAllWithFilter(filters.name(), filters.priority(), filters.done());
     }
+
+
+    // Retrieve last index used.
+    @CrossOrigin(origins=allowed_origin)
+    @GetMapping("/todos/lastIndex")
+    @ResponseStatus(value=HttpStatus.OK)
+    public Integer giveMeLastID() {
+        return toDosRepository.lastId;
+    }
 }
