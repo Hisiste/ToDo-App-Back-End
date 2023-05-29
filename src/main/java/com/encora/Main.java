@@ -231,7 +231,7 @@ public class Main {
     @CrossOrigin(origins=allowed_origin)
     @GetMapping("/todos/filtSort/pages")
     @ResponseStatus(value=HttpStatus.OK)
-    public Integer getNumberOfPages(@RequestBody filtersAndSorters filAndSor) {
+    public Integer getNumberOfPages() {
         // Number of items divided by page size.
         final int pageSize = 10;
         return (int) Math.ceil((double) toDosRepository.filteredToDos.size() / pageSize);
