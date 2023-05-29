@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -173,5 +174,66 @@ public class Main {
     @ResponseStatus(value=HttpStatus.OK)
     public Integer giveMeLastID() {
         return toDosRepository.lastId;
+    }
+
+
+    // Set filters and sorters for our to dos.
+    record filtersAndSorters (
+        toDoFilters filters,
+        SortingsFields sortField,
+        SortingOrders sortOrder
+    ) {
+
+    }
+    @CrossOrigin(origins=allowed_origin)
+    @PostMapping("/todos/setFiltSort")
+    @ResponseStatus(value=HttpStatus.OK)
+    public void setFiltersAndSorters(@RequestBody filtersAndSorters filAndSor) throws Exception {
+        // Sorting method.
+        Sort sortingMethod = Sort.by(String.valueOf(filAndSor.sortField()));
+        if (Objects.equals(String.valueOf(filAndSor.sortOrder()), "DESC")) {
+            sortingMethod = sortingMethod.descending();
+        }
+
+        // Filter to dos and then sort them.
+        toDosRepository.refreshFilteredToDos(
+                sortingMethod,
+                filAndSor.filters().name(),
+                filAndSor.filters().priority(),
+                filAndSor.filters().done()
+        );
+    }
+
+
+    // Return our todos filtered, sorted AND paginated.
+    @CrossOrigin(origins=allowed_origin)
+    @GetMapping("/todos/filtSort/{page}")
+    @ResponseStatus(value=HttpStatus.OK)
+    public List<ToDos> getFilteredToDos(@PathVariable("page") Integer page) {
+        if(page <= 0) {
+            throw new IllegalArgumentException("invalid page: " + page);
+        }
+
+        final int pageSize = 10;
+        List<ToDos> myToDos = toDosRepository.filteredToDos;
+
+        int fromIndex = (page - 1) * pageSize;
+        if (myToDos.size() <= fromIndex) {
+            return Collections.emptyList();
+        }
+
+        // toIndex exclusive
+        return myToDos.subList(fromIndex, Math.min(fromIndex + pageSize, myToDos.size()));
+    }
+
+
+    // Return how many pages after filter and sorting.
+    @CrossOrigin(origins=allowed_origin)
+    @GetMapping("/todos/filtSort/pages")
+    @ResponseStatus(value=HttpStatus.OK)
+    public Integer getNumberOfPages(@RequestBody filtersAndSorters filAndSor) {
+        // Number of items divided by page size.
+        final int pageSize = 10;
+        return (int) Math.ceil((double) toDosRepository.filteredToDos.size() / pageSize);
     }
 }

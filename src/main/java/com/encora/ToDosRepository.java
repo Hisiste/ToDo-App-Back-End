@@ -184,6 +184,19 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         return comparator;
     }
 
+
+    // Filter and then sort all of our to dos.
+    public void refreshFilteredToDos(Sort sort, String name, String priority, String done) throws Exception {
+        this.filteredToDos = this.findAllWithFilter(name, priority, done);
+
+        try {
+            Comparator<ToDos> comparator = this.getToDoComparator(sort);
+            Collections.sort(this.filteredToDos, comparator);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /*
     *         N O T   Y E T   D E F I N E D .
     */
