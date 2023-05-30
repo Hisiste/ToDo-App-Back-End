@@ -6,10 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @SpringBootApplication
 @RestController
@@ -215,7 +212,7 @@ public class Main {
         }
 
         final int pageSize = 10;
-        List<ToDos> myToDos = toDosRepository.filteredToDos;
+        List<ToDos> myToDos = toDosRepository.getFilteredToDos();
 
         int fromIndex = (page - 1) * pageSize;
         if (myToDos.size() <= fromIndex) {

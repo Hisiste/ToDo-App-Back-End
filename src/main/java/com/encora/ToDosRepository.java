@@ -171,7 +171,7 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
                 break;
 
             case "DueDate":
-                comparator = Comparator.comparing(ToDos::getDueDate);
+                comparator = Comparator.comparing(ToDos::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
 
             default:
@@ -187,14 +187,18 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
 
     // Filter and then sort all of our to dos.
     public void refreshFilteredToDos(Sort sort, String name, String priority, String done) throws Exception {
-        this.filteredToDos = this.findAllWithFilter(name, priority, done);
-
         try {
             Comparator<ToDos> comparator = this.getToDoComparator(sort);
-            Collections.sort(this.filteredToDos, comparator);
+
+            this.filteredToDos = this.findAllWithFilter(name, priority, done);
+            this.filteredToDos.sort(comparator);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<ToDos> getFilteredToDos() {
+        return this.filteredToDos;
     }
 
     /*
