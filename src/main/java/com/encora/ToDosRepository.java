@@ -201,6 +201,39 @@ public class ToDosRepository implements JpaRepository<ToDos, Integer> {
         return this.filteredToDos;
     }
 
+    public Double getAverageCompletingTime(String priority) {
+        List<Double> recordedTimes = new ArrayList<>();
+
+        if (priority.equalsIgnoreCase("all")) {
+            for (ToDos todo : this.todos) {
+                if (!todo.isDone()) {
+                    continue;
+                }
+                recordedTimes.add(
+                        (double) (todo.getDoneDate().getTime() - todo.getCreationDate().getTime())
+                );
+            }
+        } else {
+            for (ToDos todo : this.todos) {
+                if (!todo.isDone() || !Objects.equals(String.valueOf(todo.getPriority()), priority)) {
+                    continue;
+                }
+                recordedTimes.add(
+                        (double) (todo.getDoneDate().getTime() - todo.getCreationDate().getTime())
+                );
+            }
+        }
+
+        if (recordedTimes.size() == 0) {
+            return (double) 0;
+        }
+        Double valuesSum = (double) 0;
+        for (Double d : recordedTimes) {
+            valuesSum += d;
+        }
+        return valuesSum / (double) recordedTimes.size();
+    }
+
     /*
     *         N O T   Y E T   D E F I N E D .
     */

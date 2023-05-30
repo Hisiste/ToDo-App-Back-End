@@ -6,6 +6,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @SpringBootApplication
@@ -232,5 +234,28 @@ public class Main {
         // Number of items divided by page size.
         final int pageSize = 10;
         return (int) Math.ceil((double) toDosRepository.filteredToDos.size() / pageSize);
+    }
+
+
+    // Return the average time on completing to dos.
+    @CrossOrigin(origins=allowed_origin)
+    @GetMapping("/todos/average/{priority}")
+    @ResponseStatus(value=HttpStatus.OK)
+    public String getAverageTime(@PathVariable("priority") String priority) {
+        String result = "";
+        Double milliseconds = toDosRepository.getAverageCompletingTime(priority);
+
+        if (milliseconds > 86400000) {
+            // More than a day.
+            Integer days = (int) (milliseconds / 86400000);
+            result += String.valueOf(days) + " days, ";
+        }
+
+        // Convert the milliseconds into an hour, minute, second and
+        // millisecond format.
+        DateFormat simple = new SimpleDateFormat("HH:mm:ss:SSS");
+        simple.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        return result + simple.format(milliseconds);
     }
 }
