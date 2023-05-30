@@ -12,7 +12,7 @@ import java.util.*;
 
 @SpringBootApplication
 @RestController
-@RequestMapping("v1")
+@RequestMapping()
 public class Main {
     // Edit this origin and set where the Front End is allocated.
     private static final String allowed_origin = "http://localhost:8080/";
