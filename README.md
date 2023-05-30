@@ -39,7 +39,7 @@ Follow the steps:
 
 The program currently has/lacks the following functionality:
 
--   [ ] A GET endpoint (/todos) to list “to do’s”.
+-   [x] A GET endpoint (/todos) to list “to do’s”.
     -   **Include pagination.** Pages should be of 10 elements.
 -   [x] Sort by priority and/or due date
 -   [x] Filter the list of "to do's".
